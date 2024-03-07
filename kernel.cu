@@ -5,10 +5,7 @@ void __syncthreads();
 
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include <vector>
 #include <iostream>
-#include <chrono>
-#include <algorithm>
 
 #define size 100000 // set the length of input array
 
