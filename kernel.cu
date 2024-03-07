@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifdef __INTELLISENSE__
 void __syncthreads();
 #endif
@@ -8,8 +8,9 @@ void __syncthreads();
 #include <vector>
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 
-#define size 100 // set the length of input array
+#define size 100000 // set the length of input array
 
 __device__ int parallel_reduction(int val, int* smem) {
 	smem[threadIdx.x] = val;
@@ -45,13 +46,11 @@ __global__ void ParallelReductionKernel(const int* input, int* output, int _size
 int main() {
 	
 	int* arr = new int[size];
+	int sum = 0;
 
 	for (int i = 0; i < size; ++i) {
 		arr[i] = rand();
-	}
-
-	for (int i = 0; i < size; ++i) {
-		std::cout << arr[i] << std::endl;
+		sum += arr[i];
 	}
 
 	int* input_data, * output_data;
@@ -67,7 +66,13 @@ int main() {
 	int* output = new int[size];
 	cudaMemcpy(output, output_data, size*sizeof(int), cudaMemcpyDeviceToHost);
 
-	std::cout << output[0] << std::endl;
+	int result = 0;
+	for (int i = 0; i < size; ++i) {
+		result += output[i];
+	}
+	
+	std::cout << "The expected sum is: " << sum << std::endl;
+	std::cout << "The output is: " << result << std::endl;
 
 	delete[] arr;
 	delete[] output;
